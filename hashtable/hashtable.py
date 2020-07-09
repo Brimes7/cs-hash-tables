@@ -21,8 +21,10 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
-
+        self.capacity = capacity
+        #array for hwowver big people want to make it
+        #i.e. 8 will create 8 zeros
+        self.storage = [None] * capacity
 
     def get_num_slots(self):
         """
@@ -34,7 +36,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.capacity
 
 
     def get_load_factor(self):
@@ -43,7 +45,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        pass
 
 
     def fnv1(self, key):
@@ -53,7 +55,7 @@ class HashTable:
         Implement this, and/or DJB2.
         """
 
-        # Your code here
+        pass
 
 
     def djb2(self, key):
@@ -62,7 +64,11 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        hash = 5381
+        for x in key:
+            hash = ((hash << 5) + hash) + ord(x)
+        return hash & 0xFFFFFFFF
+
 
 
     def hash_index(self, key):
@@ -81,7 +87,9 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        #where we want to store the value
+        self.storage[index] = value
 
 
     def delete(self, key):
@@ -92,7 +100,13 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        if self.storage[index] is None:
+            print("Warning: No Data Found")
+        else:
+            self.storage[index] = None
+
+
 
 
     def get(self, key):
@@ -103,7 +117,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        return self.storage[index]
 
 
     def resize(self, new_capacity):
@@ -113,7 +128,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        pass
 
 
 
