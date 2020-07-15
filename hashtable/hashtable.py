@@ -11,6 +11,10 @@ class HashTableEntry:
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
 
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
 
 class HashTable:
     """
@@ -24,7 +28,8 @@ class HashTable:
         self.capacity = capacity
         #array for hwowver big people want to make it
         #i.e. 8 will create 8 zeros
-        self.storage = [None] * capacity
+        self.storage = [LinkedList()] * capacity
+        self.count = 0
 
     def get_num_slots(self):
         """
@@ -36,7 +41,7 @@ class HashTable:
 
         Implement this.
         """
-        return self.capacity
+        return len(self.storage)
 
 
     def get_load_factor(self):
@@ -45,7 +50,7 @@ class HashTable:
 
         Implement this.
         """
-        pass
+        return self.count / len(self.storage)
 
 
     def fnv1(self, key):
@@ -66,6 +71,7 @@ class HashTable:
         """
         hash = 5381
         for x in key:
+            #SHIFT OPERATOR
             hash = ((hash << 5) + hash) + ord(x)
         return hash & 0xFFFFFFFF
 
@@ -89,7 +95,22 @@ class HashTable:
         """
         index = self.hash_index(key)
         #where we want to store the value
-        self.storage[index] = value
+        # self.storage[index] = value
+        #This will happen if the Linked List is empty
+        if self.storage[index].head is None:
+            self.storage[index].head = HashTableEntry(key, value)
+            self.count += 1
+            return
+        else:
+            current = self.storage[index].head
+
+            while current.next:
+                if current.key == key:
+                    current.value = value
+                current = current.next
+            current.next = HashTableEntry(key,value)
+            self.count += 1
+
 
 
     def delete(self, key):
@@ -101,10 +122,23 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        if self.storage[index] is None:
-            print("Warning: No Data Found")
-        else:
-            self.storage[index] = None
+        # if self.storage[index] is None:
+        #     print("Warning: No Data Found")
+        # else:
+        #     self.storage[index] = None
+        current = self.storage[index].head
+        if current.key == key:
+            self.storage[index].head = self.storage[index].next
+            self.count -= 1
+            return
+
+        while current.next:
+            previous = current
+            current = current.next
+            if current.key == key:
+                previous.next = current.next
+                self.count -= 1
+                return None
 
 
 
@@ -118,7 +152,19 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        return self.storage[index]
+        current = self.storage[index].head
+
+        if current is None:
+            return None
+
+        if current.key == key:
+            return current.value
+
+        while current.next:
+            current = current.next
+            if current.key == key:
+                return current.value
+        return None
 
 
     def resize(self, new_capacity):
