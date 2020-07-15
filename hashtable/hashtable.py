@@ -108,7 +108,8 @@ class HashTable:
                 if current.key == key:
                     current.value = value
                 current = current.next
-            current.next = HashTableEntry(key,value)
+
+            current.next = HashTableEntry(key, value)
             self.count += 1
 
 
@@ -128,7 +129,7 @@ class HashTable:
         #     self.storage[index] = None
         current = self.storage[index].head
         if current.key == key:
-            self.storage[index].head = self.storage[index].next
+            self.storage[index].head = self.storage[index].head.next
             self.count -= 1
             return
 
